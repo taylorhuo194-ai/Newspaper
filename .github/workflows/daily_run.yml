@@ -1,0 +1,62 @@
+name: 5-Min Crawler & Session Report
+
+on:
+  schedule:
+    # 核心设置：每 5 分钟触发一次
+    # 这保证了全天候的数据抓取，不会漏掉任何一条快讯
+    - cron: '*/5 * * * *'
+  
+  # 允许您在 Actions 页面手动点击按钮测试运行
+  workflow_dispatch:
+
+jobs:
+  run_crawler:
+    runs-on: ubuntu-latest
+    
+    # 必须赋予写权限，否则无法将生成的文件推送到仓库
+    permissions:
+      contents: write
+
+    steps:
+      # 1. 拉取代码仓库
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. 设置 Python 环境
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # 3. 安装依赖 (即 requests 库)
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      # 4. 运行爬虫脚本
+      - name: Run crawler script
+        env:
+          # 注入我们在 Settings -> Secrets 里配置的密码
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
+          # 设置时区为北京时间，确保日志显示正确的时间
+          TZ: Asia/Shanghai
+        run: python main.py
+
+      # 5. 提交并推送结果 (如果有新数据)
+      - name: Commit and push changes
+        run: |
+          # 配置 git 用户身份
+          git config --global user.name "Newsboy Bot"
+          git config --global user.email "bot@github.com"
+          
+          # 添加所有 markdown 文件 (.md)
+          git add *.md
+          
+          # 提交更改 (如果没有任何新文件，这步会跳过，不会报错)
+          # [skip ci] 表示这次提交不会再次触发 Actions，防止死循环
+          git commit -m "Auto update: $(date +'%Y-%m-%d %H:%M') [skip ci]" || echo "No changes to commit"
+          
+          # 拉取最新代码并变基，防止冲突，然后推送
+          git pull --rebase
+          git push
