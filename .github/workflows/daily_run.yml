@@ -41,7 +41,7 @@ jobs:
           GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
           # 设置时区为北京时间，确保日志显示正确的时间
           TZ: Asia/Shanghai
-        run: Newsboy_gitaction.py
+        run: python Newsboy_gitaction.py
 
       # 5. 提交并推送结果 (如果有新数据)
       - name: Commit and push changes
