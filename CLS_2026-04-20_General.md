@@ -813,3 +813,5 @@
 
 **[05:27]** 财联社4月21日电，谷歌称，从今日起，谷歌AI Pro与Ultra订阅用户可享用谷歌AI Studio更高的使用额度上限。
 
+**[05:27]** 【Meta Platforms与CBRE宣布启动“LevelUp”计划以建设Meta在美国的数据中心】财联社4月21日电，Meta Platforms与CBRE宣布启动“LevelUp”计划，这一多年期项目旨在招聘并培训数千名技术人员，以建设Meta在美国的数据中心。
+
